@@ -1,4 +1,5 @@
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { mockDashboardStats } from '../../mock/data';
 import {
   Users,
@@ -12,7 +13,7 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Clock,
-  MessageCircle,
+  // MessageCircle,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -66,14 +67,15 @@ function MiniBarChart({ data, height = 60 }) {
 
 function GuruDashboard() {
   const stats = mockDashboardStats.guru;
+  const { t } = useLanguage();
 
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard icon={Users} label="Total Siswa" value={stats.totalStudents} change="+8" changeType="up" color="primary" />
-        <StatCard icon={UserCheck} label="Aktif Hari Ini" value={stats.activeToday} change="+12%" changeType="up" color="accent" />
-        <StatCard icon={TrendingUp} label="Rata-rata Skor" value={stats.averageScore} change="+2.1" changeType="up" color="primary" />
-        <StatCard icon={AlertTriangle} label="Siswa Berisiko" value={stats.atRiskStudents} change="+3" changeType="down" color="danger" />
+        <StatCard icon={Users} label={t('dash.stats.totalStudents')} value={stats.totalStudents} change="+8" changeType="up" color="primary" />
+        <StatCard icon={UserCheck} label={t('dash.stats.activeToday')} value={stats.activeToday} change="+12%" changeType="up" color="accent" />
+        <StatCard icon={TrendingUp} label={t('dash.stats.averageScore')} value={stats.averageScore} change="+2.1" changeType="up" color="primary" />
+        <StatCard icon={AlertTriangle} label={t('dash.stats.atRiskStudents')} value={stats.atRiskStudents} change="+3" changeType="down" color="danger" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -81,11 +83,11 @@ function GuruDashboard() {
         <div className="lg:col-span-2 glass-card p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="font-semibold text-text-primary">Performa Kelas</h3>
-              <p className="text-sm text-text-secondary">Rata-rata skor bulanan</p>
+              <h3 className="font-semibold text-text-primary">{t('dash.classPerformance')}</h3>
+              <p className="text-sm text-text-secondary">{t('dash.monthlyAvgScore')}</p>
             </div>
             <div className="badge-info">
-              <BarChart3 size={14} className="mr-1" /> Trend naik
+              <BarChart3 size={14} className="mr-1" /> {t('dash.upwardTrend')}
             </div>
           </div>
           <MiniBarChart
@@ -96,20 +98,20 @@ function GuruDashboard() {
 
         {/* Quick Actions */}
         <div className="glass-card p-6">
-          <h3 className="font-semibold text-text-primary mb-4">Aksi Cepat</h3>
+          <h3 className="font-semibold text-text-primary mb-4">{t('dash.quickActions')}</h3>
           <div className="space-y-3">
-            <Link to="/chat" className="glass-card-hover flex items-center gap-3 px-4 py-3 w-full text-left">
+            {/* <Link to="/chat" className="glass-card-hover flex items-center gap-3 px-4 py-3 w-full text-left">
               <div className="p-2 rounded-lg bg-primary/10 text-primary"><MessageCircle size={18} /></div>
               <div>
                 <p className="text-sm font-medium text-text-primary">Chat dengan AI</p>
                 <p className="text-xs text-text-muted">Tanya apapun</p>
               </div>
-            </Link>
+            </Link> */}
             <Link to="/early-warning" className="glass-card-hover flex items-center gap-3 px-4 py-3 w-full text-left">
               <div className="p-2 rounded-lg bg-danger/10 text-danger"><AlertTriangle size={18} /></div>
               <div>
                 <p className="text-sm font-medium text-text-primary">Early Warning</p>
-                <p className="text-xs text-text-muted">{stats.atRiskStudents} siswa berisiko</p>
+                <p className="text-xs text-text-muted">{stats.atRiskStudents} {t('dash.stats.atRiskStudents').toLowerCase()}</p>
               </div>
             </Link>
           </div>
@@ -118,7 +120,7 @@ function GuruDashboard() {
 
       {/* Recent Activities */}
       <div className="glass-card p-6 mt-6">
-        <h3 className="font-semibold text-text-primary mb-4">Aktivitas Terbaru</h3>
+        <h3 className="font-semibold text-text-primary mb-4">{t('dash.recentActivities')}</h3>
         <div className="space-y-3">
           {stats.recentActivities.map((act) => (
             <div key={act.id} className="flex items-center gap-4 px-4 py-3 rounded-xl bg-surface-light/20 hover:bg-surface-light/40 transition-colors">
@@ -142,14 +144,15 @@ function GuruDashboard() {
 
 function SiswaDashboard() {
   const stats = mockDashboardStats.siswa;
+  const { t } = useLanguage();
 
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard icon={BookOpen} label="Materi Selesai" value={`${stats.totalCompleted}/${stats.totalMaterials}`} color="primary" />
-        <StatCard icon={Trophy} label="Skor Saat Ini" value={stats.currentScore} change="+5" changeType="up" color="accent" />
-        <StatCard icon={TrendingUp} label="Peringkat" value={`#${stats.rank}`} color="primary" />
-        <StatCard icon={Flame} label="Streak Belajar" value={`${stats.streak} hari`} color="warning" />
+        <StatCard icon={BookOpen} label={t('dash.stats.materialsCompleted')} value={`${stats.totalCompleted}/${stats.totalMaterials}`} color="primary" />
+        <StatCard icon={Trophy} label={t('dash.stats.currentScore')} value={stats.currentScore} change="+5" changeType="up" color="accent" />
+        <StatCard icon={TrendingUp} label={t('dash.stats.rank')} value={`#${stats.rank}`} color="primary" />
+        <StatCard icon={Flame} label={t('dash.stats.learningStreak')} value={`${stats.streak} ${t('unit.days')}`} color="warning" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -157,8 +160,8 @@ function SiswaDashboard() {
         <div className="lg:col-span-2 glass-card p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="font-semibold text-text-primary">Progress Mingguan</h3>
-              <p className="text-sm text-text-secondary">Waktu belajar (menit)</p>
+              <h3 className="font-semibold text-text-primary">{t('dash.weeklyProgress')}</h3>
+              <p className="text-sm text-text-secondary">{t('dash.studyTimeMinutes')}</p>
             </div>
           </div>
           <MiniBarChart
@@ -169,20 +172,13 @@ function SiswaDashboard() {
 
         {/* Quick Actions */}
         <div className="glass-card p-6">
-          <h3 className="font-semibold text-text-primary mb-4">Mulai Belajar</h3>
+          <h3 className="font-semibold text-text-primary mb-4">{t('dash.startLearning')}</h3>
           <div className="space-y-3">
-            <Link to="/chat" className="glass-card-hover flex items-center gap-3 px-4 py-3 w-full text-left">
-              <div className="p-2 rounded-lg bg-primary/10 text-primary"><MessageCircle size={18} /></div>
-              <div>
-                <p className="text-sm font-medium text-text-primary">Tanya AI</p>
-                <p className="text-xs text-text-muted">Dapatkan bantuan instan</p>
-              </div>
-            </Link>
             <Link to="/learning" className="glass-card-hover flex items-center gap-3 px-4 py-3 w-full text-left">
               <div className="p-2 rounded-lg bg-accent/10 text-accent"><BookOpen size={18} /></div>
               <div>
-                <p className="text-sm font-medium text-text-primary">Lanjut Belajar</p>
-                <p className="text-xs text-text-muted">{stats.totalMaterials - stats.totalCompleted} materi tersisa</p>
+                <p className="text-sm font-medium text-text-primary">{t('dash.continueLearning')}</p>
+                <p className="text-xs text-text-muted">{stats.totalMaterials - stats.totalCompleted} {t('dash.materialsLeft')}</p>
               </div>
             </Link>
           </div>
@@ -191,7 +187,7 @@ function SiswaDashboard() {
 
       {/* Recent Activity */}
       <div className="glass-card p-6 mt-6">
-        <h3 className="font-semibold text-text-primary mb-4">Aktivitas Terbaru</h3>
+        <h3 className="font-semibold text-text-primary mb-4">{t('dash.recentActivities')}</h3>
         <div className="space-y-3">
           {stats.recentActivities.map((act) => (
             <div key={act.id} className="flex items-center justify-between px-4 py-3 rounded-xl bg-surface-light/20 hover:bg-surface-light/40 transition-colors">
@@ -202,7 +198,7 @@ function SiswaDashboard() {
                   <p className="text-xs text-text-muted">{act.time}</p>
                 </div>
               </div>
-              {act.score && <span className="badge-success">Skor: {act.score}</span>}
+              {act.score && <span className="badge-success">{t('dash.score')}: {act.score}</span>}
             </div>
           ))}
         </div>
@@ -213,17 +209,18 @@ function SiswaDashboard() {
 
 export default function DashboardPage() {
   const { user, isGuru, isAdmin } = useAuth();
+  const { t } = useLanguage();
 
   return (
     <div className="animate-fade-in">
       <div className="page-header">
         <h1 className="page-title">
-          Selamat Datang, <span className="gradient-text">{user?.name}</span> 👋
+          {t('dash.welcome')} <span className="gradient-text">{user?.name}</span> 👋
         </h1>
         <p className="page-subtitle">
           {isGuru || isAdmin
-            ? 'Pantau performa siswa dan kelola pembelajaran.'
-            : 'Lihat progress belajar dan lanjutkan materi.'
+            ? t('dash.subtitle.guru')
+            : t('dash.subtitle.siswa')
           }
         </p>
       </div>

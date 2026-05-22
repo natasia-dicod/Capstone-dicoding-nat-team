@@ -1,6 +1,6 @@
 import { mockRecommendations } from '../../mock/data';
 import { Lightbulb, ArrowRight, Sparkles, Clock, BarChart3 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 
 export default function RecommendationPage() {
   const getDiffColor = (d) => {
@@ -57,11 +57,12 @@ export default function RecommendationPage() {
         ))}
       </div>
 
-      <div className="mt-8 text-center">
+      {/* <div className="mt-8 text-center">
         <Link to="/chat" className="btn-primary inline-flex items-center gap-2">
           <Sparkles size={16} /> Minta Rekomendasi Lain dari AI
         </Link>
-      </div>
+      </div> */}
+
     </div>
   );
 }

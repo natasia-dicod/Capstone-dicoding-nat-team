@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { mockMaterials } from '../../mock/data';
 import { BookOpen, Clock, Search, Filter, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function LearningPage() {
+  const { t } = useLanguage();
   const [search, setSearch] = useState('');
   const [filterSubject, setFilterSubject] = useState('Semua');
 
@@ -25,8 +27,8 @@ export default function LearningPage() {
   return (
     <div className="animate-fade-in">
       <div className="page-header">
-        <h1 className="page-title">Materi Belajar 📚</h1>
-        <p className="page-subtitle">Jelajahi dan pelajari materi sesuai kebutuhan Anda</p>
+        <h1 className="page-title">{t('learn.title')}</h1>
+        <p className="page-subtitle">{t('learn.subtitle')}</p>
       </div>
 
       {/* Search & Filter */}
@@ -36,7 +38,7 @@ export default function LearningPage() {
           <input
             id="learning-search"
             type="text"
-            placeholder="Cari materi..."
+            placeholder={t('learn.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="input-field pl-11"
@@ -53,13 +55,12 @@ export default function LearningPage() {
                   : 'bg-surface-light/30 text-text-secondary border border-gray-200 dark:border-white/5 hover:bg-surface-light/50'
               }`}
             >
-              {s}
+              {s === 'Semua' ? t('learn.all') : s}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Materials Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {filtered.map((material, i) => (
           <div
@@ -80,7 +81,6 @@ export default function LearningPage() {
               <span className="flex items-center gap-1"><Clock size={12} /> {material.duration}</span>
             </div>
 
-            {/* Progress Bar */}
             <div className="mb-4">
               <div className="flex justify-between text-xs mb-1.5">
                 <span className="text-text-secondary">Progress</span>
@@ -95,18 +95,18 @@ export default function LearningPage() {
                 />
               </div>
               <p className="text-[10px] text-text-muted mt-1">
-                {material.completedLessons}/{material.totalLessons} pelajaran
+                {material.completedLessons}/{material.totalLessons} {t('learn.lessons')}
               </p>
             </div>
 
             <div className="mt-auto">
               {material.progress === 100 ? (
                 <div className="flex items-center gap-2 text-accent text-sm font-medium">
-                  <CheckCircle2 size={16} /> Selesai
+                  <CheckCircle2 size={16} /> {t('learn.completed')}
                 </div>
               ) : (
                 <button className="btn-secondary w-full flex items-center justify-center gap-2 text-sm py-2">
-                  {material.progress > 0 ? 'Lanjutkan' : 'Mulai Belajar'}
+                  {material.progress > 0 ? t('learn.continue') : t('learn.startLearning')}
                   <ArrowRight size={16} />
                 </button>
               )}
@@ -117,7 +117,7 @@ export default function LearningPage() {
 
       {filtered.length === 0 && (
         <div className="text-center py-16">
-          <p className="text-text-muted text-lg">Tidak ada materi yang ditemukan</p>
+          <p className="text-text-muted text-lg">{t('learn.noResults')}</p>
         </div>
       )}
     </div>
