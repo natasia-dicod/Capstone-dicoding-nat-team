@@ -1,22 +1,59 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { mockEarlyWarningStudents, mockAlerts } from '../../mock/data';
+import api from '../../services/api';
 import { AlertTriangle, TrendingUp, TrendingDown, Minus, Search, Bell, Users, ShieldAlert, ShieldCheck, Clock } from 'lucide-react';
 
 export default function EarlyWarningPage() {
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
+  const [studentsData, setStudentsData] = useState([]);
+  const [alertsData, setAlertsData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const students = mockEarlyWarningStudents.filter((s) => {
+  useEffect(() => {
+    const fetchWarnings = async () => {
+      try {
+        const response = await api.get('/api/early-warning');
+        if (response.data.data && response.data.data.length > 0) {
+          // Map backend warnings to UI format
+          const apiStudents = response.data.data.map(w => ({
+            id: w.id,
+            name: w.user_name || 'Siswa',
+            class: 'Kelas API',
+            score: w.risk_score ? 100 - w.risk_score : 50,
+            attendance: 80,
+            trend: 'down',
+            status: w.risk_level === 'high' ? 'high-risk' : (w.risk_level === 'medium' ? 'medium-risk' : 'low-risk'),
+            lastActive: 'Baru saja'
+          }));
+          setStudentsData(apiStudents);
+          setAlertsData(mockAlerts); // Keep mock alerts if backend doesn't provide them
+        } else {
+          setStudentsData(mockEarlyWarningStudents);
+          setAlertsData(mockAlerts);
+        }
+      } catch (error) {
+        console.warn('Failed to fetch early warnings', error);
+        setStudentsData(mockEarlyWarningStudents);
+        setAlertsData(mockAlerts);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchWarnings();
+  }, []);
+
+  const students = studentsData.filter((s) => {
     const matchSearch = s.name.toLowerCase().includes(search.toLowerCase());
     const matchFilter = filter === 'all' || s.status === filter;
     return matchSearch && matchFilter;
   });
 
   const stats = {
-    total: mockEarlyWarningStudents.length,
-    highRisk: mockEarlyWarningStudents.filter((s) => s.status === 'high-risk').length,
-    mediumRisk: mockEarlyWarningStudents.filter((s) => s.status === 'medium-risk').length,
-    safe: mockEarlyWarningStudents.filter((s) => s.status === 'safe' || s.status === 'low-risk').length,
+    total: studentsData.length,
+    highRisk: studentsData.filter((s) => s.status === 'high-risk').length,
+    mediumRisk: studentsData.filter((s) => s.status === 'medium-risk').length,
+    safe: studentsData.filter((s) => s.status === 'safe' || s.status === 'low-risk').length,
   };
 
   const getStatusBadge = (status) => {
@@ -35,6 +72,10 @@ export default function EarlyWarningPage() {
     const m = { 'high-risk': 'bg-danger/10', 'medium-risk': 'bg-warning/10', 'low-risk': 'bg-primary/10', 'safe': 'bg-accent/10' };
     return m[status] || 'bg-accent/10';
   };
+
+  if (loading) {
+    return <div className="p-8 text-center text-text-muted">Loading early warnings...</div>;
+  }
 
   return (
     <div className="animate-fade-in">
@@ -96,7 +137,7 @@ export default function EarlyWarningPage() {
           <div className="glass-card p-5">
             <h3 className="font-semibold text-text-primary mb-4 flex items-center gap-2"><Bell size={16} className="text-warning" /> Notifikasi</h3>
             <div className="space-y-3">
-              {mockAlerts.map((a) => (
+              {alertsData.map((a) => (
                 <div key={a.id} className={`p-3 rounded-xl border text-sm ${a.type==='danger'?'bg-danger/5 border-danger/20 text-danger':a.type==='warning'?'bg-warning/5 border-warning/20 text-warning':'bg-primary/5 border-primary/20 text-primary'}`}>
                   <p className="text-xs font-medium">{a.message}</p>
                   <p className="text-[10px] opacity-60 mt-1 flex items-center gap-1"><Clock size={10}/> {a.time}</p>

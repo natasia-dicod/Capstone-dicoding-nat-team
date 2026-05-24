@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { mockMaterials } from '../../mock/data';
+import api from '../../services/api';
 import { BookOpen, Clock, Search, Filter, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
@@ -8,10 +9,45 @@ export default function LearningPage() {
   const { t } = useLanguage();
   const [search, setSearch] = useState('');
   const [filterSubject, setFilterSubject] = useState('Semua');
+  const [materials, setMaterials] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const subjects = ['Semua', ...new Set(mockMaterials.map((m) => m.subject))];
+  useEffect(() => {
+    const fetchMaterials = async () => {
+      try {
+        const response = await api.get('/api/materials');
+        // Backend returns basic material info. Merge or fallback to mock data to maintain rich UI
+        if (response.data.data && response.data.data.length > 0) {
+          // In real integration, we map API data to our UI shape
+          const apiMaterials = response.data.data.map(m => ({
+            id: m.id,
+            title: m.title,
+            subject: m.subject,
+            difficulty: m.difficulty === 'easy' ? 'Mudah' : (m.difficulty === 'medium' ? 'Menengah' : 'Sulit'),
+            description: m.content || 'Materi pembelajaran dari database.',
+            progress: 0,
+            icon: '📚',
+            completedLessons: 0,
+            totalLessons: 10,
+            duration: '2h',
+          }));
+          setMaterials(apiMaterials);
+        } else {
+          setMaterials(mockMaterials);
+        }
+      } catch (error) {
+        console.warn('Failed to fetch materials, using fallback mock data', error);
+        setMaterials(mockMaterials);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMaterials();
+  }, []);
 
-  const filtered = mockMaterials.filter((m) => {
+  const subjects = ['Semua', ...new Set(materials.map((m) => m.subject))];
+
+  const filtered = materials.filter((m) => {
     const matchesSearch = m.title.toLowerCase().includes(search.toLowerCase()) ||
       m.subject.toLowerCase().includes(search.toLowerCase());
     const matchesFilter = filterSubject === 'Semua' || m.subject === filterSubject;
@@ -23,6 +59,10 @@ export default function LearningPage() {
     if (d === 'Menengah') return 'badge-warning';
     return 'badge-danger';
   };
+
+  if (loading) {
+    return <div className="p-8 text-center text-text-muted">Loading materials...</div>;
+  }
 
   return (
     <div className="animate-fade-in">

@@ -60,12 +60,12 @@ export default function App() {
                  {/* <Route path="/chat" element={<ChatPage />} /> */}
                 <Route path="/learning" element={<LearningPage />} />
                 <Route path="/answer-input" element={
-                  <ProtectedRoute allowedRoles={['siswa', 'admin']}>
+                  <ProtectedRoute allowedRoles={['siswa', 'student', 'admin']}>
                     <AnswerInputPage />
                   </ProtectedRoute>
                 } />
                 <Route path="/early-warning" element={
-                  <ProtectedRoute allowedRoles={['guru', 'admin']}>
+                  <ProtectedRoute allowedRoles={['guru', 'teacher', 'admin']}>
                     <EarlyWarningPage />
                   </ProtectedRoute>
                 } />

@@ -1,6 +1,8 @@
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { mockDashboardStats } from '../../mock/data';
+import api from '../../services/api';
 import {
   Users,
   UserCheck,
@@ -65,8 +67,7 @@ function MiniBarChart({ data, height = 60 }) {
   );
 }
 
-function GuruDashboard() {
-  const stats = mockDashboardStats.guru;
+function GuruDashboard({ stats }) {
   const { t } = useLanguage();
 
   return (
@@ -91,7 +92,7 @@ function GuruDashboard() {
             </div>
           </div>
           <MiniBarChart
-            data={stats.performanceChart.map((d) => ({ label: d.month, value: d.score }))}
+            data={(stats.performanceChart || []).map((d) => ({ label: d.month, value: d.score }))}
             height={120}
           />
         </div>
@@ -100,13 +101,6 @@ function GuruDashboard() {
         <div className="glass-card p-6">
           <h3 className="font-semibold text-text-primary mb-4">{t('dash.quickActions')}</h3>
           <div className="space-y-3">
-            {/* <Link to="/chat" className="glass-card-hover flex items-center gap-3 px-4 py-3 w-full text-left">
-              <div className="p-2 rounded-lg bg-primary/10 text-primary"><MessageCircle size={18} /></div>
-              <div>
-                <p className="text-sm font-medium text-text-primary">Chat dengan AI</p>
-                <p className="text-xs text-text-muted">Tanya apapun</p>
-              </div>
-            </Link> */}
             <Link to="/early-warning" className="glass-card-hover flex items-center gap-3 px-4 py-3 w-full text-left">
               <div className="p-2 rounded-lg bg-danger/10 text-danger"><AlertTriangle size={18} /></div>
               <div>
@@ -122,7 +116,7 @@ function GuruDashboard() {
       <div className="glass-card p-6 mt-6">
         <h3 className="font-semibold text-text-primary mb-4">{t('dash.recentActivities')}</h3>
         <div className="space-y-3">
-          {stats.recentActivities.map((act) => (
+          {(stats.recentActivities || []).map((act) => (
             <div key={act.id} className="flex items-center gap-4 px-4 py-3 rounded-xl bg-surface-light/20 hover:bg-surface-light/40 transition-colors">
               <div className="w-8 h-8 rounded-lg gradient-bg-subtle flex items-center justify-center text-sm font-bold text-primary">
                 {act.student.charAt(0)}
@@ -142,8 +136,7 @@ function GuruDashboard() {
   );
 }
 
-function SiswaDashboard() {
-  const stats = mockDashboardStats.siswa;
+function SiswaDashboard({ stats }) {
   const { t } = useLanguage();
 
   return (
@@ -165,7 +158,7 @@ function SiswaDashboard() {
             </div>
           </div>
           <MiniBarChart
-            data={stats.weeklyProgress.map((d) => ({ label: d.day, value: d.minutes }))}
+            data={(stats.weeklyProgress || []).map((d) => ({ label: d.day, value: d.minutes }))}
             height={120}
           />
         </div>
@@ -189,7 +182,7 @@ function SiswaDashboard() {
       <div className="glass-card p-6 mt-6">
         <h3 className="font-semibold text-text-primary mb-4">{t('dash.recentActivities')}</h3>
         <div className="space-y-3">
-          {stats.recentActivities.map((act) => (
+          {(stats.recentActivities || []).map((act) => (
             <div key={act.id} className="flex items-center justify-between px-4 py-3 rounded-xl bg-surface-light/20 hover:bg-surface-light/40 transition-colors">
               <div className="flex items-center gap-3">
                 <Clock size={16} className="text-text-muted" />
@@ -210,6 +203,30 @@ function SiswaDashboard() {
 export default function DashboardPage() {
   const { user, isGuru, isAdmin } = useAuth();
   const { t } = useLanguage();
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const response = await api.get('/api/dashboard');
+        // Backend returns stats that might be slightly different. 
+        // We merge with mock data to prevent undefined errors in UI components.
+        const mockFallback = isGuru || isAdmin ? mockDashboardStats.guru : mockDashboardStats.siswa;
+        setData({ ...mockFallback, ...response.data.data });
+      } catch (error) {
+        console.warn('Failed to fetch dashboard data, using fallback mock data', error);
+        setData(isGuru || isAdmin ? mockDashboardStats.guru : mockDashboardStats.siswa);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDashboardData();
+  }, [isGuru, isAdmin]);
+
+  if (loading) {
+    return <div className="p-8 text-center text-text-muted">Loading dashboard...</div>;
+  }
 
   return (
     <div className="animate-fade-in">
@@ -225,7 +242,7 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {isGuru || isAdmin ? <GuruDashboard /> : <SiswaDashboard />}
+      {isGuru || isAdmin ? <GuruDashboard stats={data} /> : <SiswaDashboard stats={data} />}
     </div>
   );
 }

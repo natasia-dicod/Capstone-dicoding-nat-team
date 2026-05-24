@@ -1,13 +1,52 @@
+import { useState, useEffect } from 'react';
 import { mockRecommendations } from '../../mock/data';
+import api from '../../services/api';
 import { Lightbulb, ArrowRight, Sparkles, Clock, BarChart3 } from 'lucide-react';
 // import { Link } from 'react-router-dom';
 
 export default function RecommendationPage() {
+  const [recommendations, setRecommendations] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRecs = async () => {
+      try {
+        const response = await api.get('/api/recommendations');
+        if (response.data.data && response.data.data.length > 0) {
+          // Map backend format to UI format
+          const apiRecs = response.data.data.map((r, i) => ({
+            id: r.id,
+            title: r.material_title || `Materi Rekomendasi ${i+1}`,
+            subject: 'AI Recommendation',
+            reason: r.reason || 'Berdasarkan performa terakhir Anda',
+            matchScore: Math.floor(80 + Math.random() * 20), // mock percentage
+            difficulty: 'Menengah',
+            duration: '1h',
+            icon: '🎯'
+          }));
+          setRecommendations(apiRecs);
+        } else {
+          setRecommendations(mockRecommendations);
+        }
+      } catch (error) {
+        console.warn('Failed to fetch recommendations', error);
+        setRecommendations(mockRecommendations);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRecs();
+  }, []);
+
   const getDiffColor = (d) => {
     if (d === 'Mudah') return 'badge-success';
     if (d === 'Menengah') return 'badge-warning';
     return 'badge-danger';
   };
+
+  if (loading) {
+    return <div className="p-8 text-center text-text-muted">Loading recommendations...</div>;
+  }
 
   return (
     <div className="animate-fade-in">
@@ -27,7 +66,7 @@ export default function RecommendationPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {mockRecommendations.map((rec, i) => (
+        {recommendations.map((rec, i) => (
           <div key={rec.id} className="glass-card-hover p-5" style={{ animationDelay: `${i * 100}ms` }}>
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-3">
@@ -56,7 +95,6 @@ export default function RecommendationPage() {
           </div>
         ))}
       </div>
-
       {/* <div className="mt-8 text-center">
         <Link to="/chat" className="btn-primary inline-flex items-center gap-2">
           <Sparkles size={16} /> Minta Rekomendasi Lain dari AI
