@@ -10,6 +10,7 @@ export default function AnswerInputPage() {
   const [answer, setAnswer] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [history, setHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
 
@@ -46,43 +47,36 @@ export default function AnswerInputPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    
-    try {
-      await api.post('/api/predictions', {
-        question,
-        answer
-      });
-      // Sukses submit ke backend
-      setSubmitted(true);
-      setTimeout(() => setSubmitted(false), 3000);
-      setAnswer('');
-      setQuestion('');
-      
-      // Update local history temporarily
-      setHistory(prev => [{
-        id: Date.now(),
-        subject: subject || 'Lainnya',
-        topic: topic,
-        question: question,
-        status: 'pending',
-        submittedAt: 'Baru saja'
-      }, ...prev]);
+    setSubmitError('');
 
-    } catch (error) {
-      console.warn('API post failed, using fallback behavior', error);
+    try {
+      const response = await api.post('/api/predictions', { question, answer });
+      const data = response.data?.data || {};
+
       setSubmitted(true);
       setTimeout(() => setSubmitted(false), 3000);
+      const submittedQuestion = question;
+      const submittedSubject = subject || 'Lainnya';
+      const submittedTopic = topic;
       setAnswer('');
       setQuestion('');
-      
+
+      // Pakai data asli dari backend (skor & feedback dari AI bila ML hidup)
       setHistory(prev => [{
-        id: Date.now(),
-        subject: subject || 'Lainnya',
-        topic: topic,
-        question: question,
-        status: 'pending',
-        submittedAt: 'Baru saja'
+        id: data.id ?? Date.now(),
+        subject: submittedSubject,
+        topic: submittedTopic,
+        question: data.question || submittedQuestion,
+        answer: data.answer,
+        score: data.score,
+        feedback: data.feedback,
+        status: data.feedback ? 'reviewed' : 'pending',
+        submittedAt: 'Baru saja',
       }, ...prev]);
+    } catch (error) {
+      const msg = error.response?.data?.message || 'Gagal mengirim jawaban. Pastikan kamu sudah login dan backend berjalan.';
+      console.error('Submit failed:', error);
+      setSubmitError(msg);
     } finally {
       setSubmitting(false);
     }
@@ -111,6 +105,12 @@ export default function AnswerInputPage() {
             {submitted && (
               <div className="mb-4 px-4 py-3 bg-accent/10 border border-accent/20 rounded-xl text-accent text-sm animate-fade-in flex items-center gap-2">
                 <CheckCircle2 size={16} /> Jawaban berhasil dikirim! AI sedang menganalisis...
+              </div>
+            )}
+
+            {submitError && (
+              <div className="mb-4 px-4 py-3 bg-danger/10 border border-danger/20 rounded-xl text-danger text-sm animate-fade-in">
+                {submitError}
               </div>
             )}
 

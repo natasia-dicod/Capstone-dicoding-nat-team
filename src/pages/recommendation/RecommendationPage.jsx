@@ -12,15 +12,17 @@ export default function RecommendationPage() {
     const fetchRecs = async () => {
       try {
         const response = await api.get('/api/recommendations');
-        if (response.data.data && response.data.data.length > 0) {
+        // Backend mengembalikan object { ml_recommendations, material_recs }
+        const materialRecs = response.data.data?.material_recs || [];
+        if (materialRecs.length > 0) {
           // Map backend format to UI format
-          const apiRecs = response.data.data.map((r, i) => ({
+          const apiRecs = materialRecs.map((r, i) => ({
             id: r.id,
-            title: r.material_title || `Materi Rekomendasi ${i+1}`,
-            subject: 'AI Recommendation',
+            title: r.title || `Materi Rekomendasi ${i+1}`,
+            subject: r.subject || 'AI Recommendation',
             reason: r.reason || 'Berdasarkan performa terakhir Anda',
             matchScore: Math.floor(80 + Math.random() * 20), // mock percentage
-            difficulty: 'Menengah',
+            difficulty: r.difficulty === 'easy' ? 'Mudah' : (r.difficulty === 'hard' ? 'Sulit' : 'Menengah'),
             duration: '1h',
             icon: '🎯'
           }));
