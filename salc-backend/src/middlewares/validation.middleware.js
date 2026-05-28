@@ -122,11 +122,50 @@ const validateFeedback = (req, res, next) => {
   next();
 };
 
+const validateQuizSingle = (req, res, next) => {
+  const { materialId, question, answer } = req.body;
+  const errors = [];
+
+  if (!materialId || isNaN(materialId)) {
+    errors.push('materialId must be a valid number');
+  }
+  if (!question || question.trim().length < 1) {
+    errors.push('question is required');
+  }
+  if (!answer || answer.trim().length < 1) {
+    errors.push('answer is required');
+  }
+
+  if (errors.length > 0) {
+    return res.status(400).json({ success: false, message: errors[0], errors });
+  }
+  next();
+};
+
+const validateUserUpdate = (req, res, next) => {
+  const { name, email } = req.body;
+  const errors = [];
+
+  if (!name || name.trim().length < 2) {
+    errors.push('Name must be at least 2 characters');
+  }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errors.push('Invalid email format');
+  }
+
+  if (errors.length > 0) {
+    return res.status(400).json({ success: false, message: errors[0], errors });
+  }
+  next();
+};
+
 module.exports = {
   validateRegister,
   validateLogin,
   validateProgress,
   validateMaterial,
   validateQuizBulk,
+  validateQuizSingle,
   validateFeedback,
+  validateUserUpdate,
 };

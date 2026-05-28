@@ -11,9 +11,15 @@ const UserController = {
     }
   },
 
-  // GET /api/users/:id
+  // GET /api/users/:id — hanya pemilik akun, teacher, atau admin
   getById: async (req, res) => {
     try {
+      const isOwner = Number(req.params.id) === req.user.id;
+      const isStaff = ['teacher', 'admin'].includes(req.user.role);
+      if (!isOwner && !isStaff) {
+        return res.status(403).json({ success: false, message: 'Access denied' });
+      }
+
       const user = await UserModel.findById(req.params.id);
       if (!user) {
         return res.status(404).json({ success: false, message: 'User not found' });
@@ -24,9 +30,15 @@ const UserController = {
     }
   },
 
-  // PUT /api/users/:id
+  // PUT /api/users/:id — hanya pemilik akun atau admin
   update: async (req, res) => {
     try {
+      const isOwner = Number(req.params.id) === req.user.id;
+      const isAdmin = req.user.role === 'admin';
+      if (!isOwner && !isAdmin) {
+        return res.status(403).json({ success: false, message: 'Access denied' });
+      }
+
       const { name, email } = req.body;
       const affected = await UserModel.update(req.params.id, { name, email });
       if (!affected) {
