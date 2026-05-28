@@ -18,6 +18,7 @@ const materialRoutes       = require('./routes/material.routes');
 const earlyWarningRoutes   = require('./routes/earlyWarning.routes');
 const recommendationRoutes = require('./routes/recommendation.routes');
 const quizAnswerRoutes     = require('./routes/quizAnswer.routes');
+const dashboardRoutes      = require('./routes/dashboard.routes');
 
 app.use('/api/auth',            authRoutes);
 app.use('/api/users',           userRoutes);
@@ -27,6 +28,7 @@ app.use('/api/materials',       materialRoutes);
 app.use('/api/early-warning',   earlyWarningRoutes);
 app.use('/api/recommendations', recommendationRoutes);
 app.use('/api/quiz',            quizAnswerRoutes);
+app.use('/api/dashboard',       dashboardRoutes);
 
 // Health check
 app.get('/', (req, res) => {

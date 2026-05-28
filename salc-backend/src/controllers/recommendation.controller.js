@@ -81,8 +81,8 @@ const RecommendationController = {
           'parental level of education' : parental_education ?? 2,
           'lunch'                       : lunch ?? 1,
           'test preparation course'     : test_preparation ?? 0,
-          'reading score'               : reading_score,
-          'writing score'               : writing_score,
+          'reading_score'               : reading_score,
+          'writing_score'               : writing_score,
         };
 
         const mlRes = await axios.post(`${ML_URL}/api/predict/performance`, payload, { timeout: 10000 });
