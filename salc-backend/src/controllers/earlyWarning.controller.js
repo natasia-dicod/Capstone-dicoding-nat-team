@@ -37,7 +37,7 @@ const EarlyWarningController = {
 
         const mlRes = await axios.post(`${ML_URL}/api/predict/activity`, payload, { timeout: 10000 });
         result = {
-          is_at_risk   : mlRes.data.risk_level !== 'Aman',
+          is_at_risk   : String(mlRes.data.risk_level || '').toUpperCase() !== 'AMAN',
           risk_level   : mlRes.data.risk_level,
           risk_score   : mlRes.data.confidence,
           message      : _buildMessage(mlRes.data.risk_level),
@@ -53,7 +53,7 @@ const EarlyWarningController = {
       await EarlyWarningModel.create({
         userId    : req.user.id,
         isAtRisk  : result.is_at_risk,
-        riskLevel : result.risk_level,
+        riskLevel : _normalizeRiskLevel(result.risk_level),
         riskScore : result.risk_score || null,
         message   : result.message,
       });
@@ -98,8 +98,8 @@ const EarlyWarningController = {
           'parental level of education'    : parental_education ?? 2,
           'lunch'                          : lunch ?? 1,
           'test preparation course'        : test_preparation ?? 0,
-          'reading score'                  : reading_score,
-          'writing score'                  : writing_score,
+          'reading_score'                  : reading_score,
+          'writing_score'                  : writing_score,
         };
 
         const mlRes = await axios.post(`${ML_URL}/api/predict/performance`, payload, { timeout: 10000 });
@@ -119,7 +119,7 @@ const EarlyWarningController = {
       await EarlyWarningModel.create({
         userId    : req.user.id,
         isAtRisk  : result.is_at_risk,
-        riskLevel : result.risk_level,
+        riskLevel : _normalizeRiskLevel(result.risk_level),
         riskScore : result.risk_score || null,
         message   : result.message,
       });
@@ -155,9 +155,18 @@ const EarlyWarningController = {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
+// Normalisasi nilai risk_level dari ML (Kritis/Perhatian/Aman atau KRITIS/SEDANG/AMAN)
+// ke enum DB ('low','medium','high')
+function _normalizeRiskLevel(level) {
+  const v = String(level || '').toUpperCase();
+  if (v === 'KRITIS') return 'high';
+  if (v === 'PERHATIAN' || v === 'SEDANG') return 'medium';
+  return 'low';
+}
+
 function _buildMessage(riskLevel) {
   const level = (riskLevel || '').toUpperCase();
-  if (level === 'KRITIS' || level === 'KRITIS') return 'Kamu berisiko tinggi tertinggal. Segera hubungi pengajar untuk bantuan.';
+  if (level === 'KRITIS') return 'Kamu berisiko tinggi tertinggal. Segera hubungi pengajar untuk bantuan.';
   if (level === 'PERHATIAN' || level === 'SEDANG') return 'Ada beberapa area yang perlu perhatian lebih. Yuk tingkatkan lagi!';
   return 'Performa belajar kamu baik. Terus semangat!';
 }

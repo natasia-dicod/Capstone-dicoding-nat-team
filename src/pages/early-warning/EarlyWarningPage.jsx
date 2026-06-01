@@ -13,19 +13,25 @@ export default function EarlyWarningPage() {
   useEffect(() => {
     const fetchWarnings = async () => {
       try {
-        const response = await api.get('/api/early-warning');
+        const response = await api.get('/api/early-warning/unresolved');
         if (response.data.data && response.data.data.length > 0) {
           // Map backend warnings to UI format
-          const apiStudents = response.data.data.map(w => ({
-            id: w.id,
-            name: w.user_name || 'Siswa',
-            class: 'Kelas API',
-            score: w.risk_score ? 100 - w.risk_score : 50,
-            attendance: 80,
-            trend: 'down',
-            status: w.risk_level === 'high' ? 'high-risk' : (w.risk_level === 'medium' ? 'medium-risk' : 'low-risk'),
-            lastActive: 'Baru saja'
-          }));
+          const apiStudents = response.data.data.map(w => {
+            const level = String(w.risk_level || '').toLowerCase();
+            const status = level === 'high'
+              ? 'high-risk'
+              : level === 'medium' ? 'medium-risk' : 'low-risk';
+            return {
+              id: w.id,
+              name: w.student_name || 'Siswa',
+              class: 'Kelas API',
+              score: w.risk_score != null ? Math.round(100 - w.risk_score * 100) : 50,
+              attendance: 80,
+              trend: 'down',
+              status,
+              lastActive: 'Baru saja'
+            };
+          });
           setStudentsData(apiStudents);
           setAlertsData(mockAlerts); // Keep mock alerts if backend doesn't provide them
         } else {

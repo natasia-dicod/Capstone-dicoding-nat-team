@@ -49,25 +49,16 @@ export function AuthProvider({ children }) {
       // Map Indonesian role names to database enum values ('student' or 'teacher')
       const apiRole = role === 'siswa' ? 'student' : role === 'guru' ? 'teacher' : role;
       
-      // Try real API first
-      const response = await api.post('/api/auth/register', { name, email, password, role: apiRole });
-      const { id } = response.data.data;
-      
-      // Auto login after register if API supports it, or we just mock the user object
-      const newUser = {
-        id,
-        name,
-        email,
-        role: apiRole,
-        avatar: null,
-        createdAt: new Date().toISOString(),
-      };
-      // Usually API register doesn't return token if it's separate from login, 
-      // user will need to login, or we mock the login here. 
-      // Let's assume login is required after register, but frontend expects auto-login:
-      setUser(newUser);
-      localStorage.setItem('edumind_user', JSON.stringify(newUser));
-      return newUser;
+      // Register dulu
+      await api.post('/api/auth/register', { name, email, password, role: apiRole });
+
+      // Lalu auto-login agar token tersimpan (backend register tidak mengembalikan token)
+      const loginRes = await api.post('/api/auth/login', { email, password });
+      const { token, user: safeUser } = loginRes.data.data;
+      setUser(safeUser);
+      localStorage.setItem('edumind_user', JSON.stringify(safeUser));
+      localStorage.setItem('token', token);
+      return safeUser;
     } catch (error) {
       console.warn('Real API failed, falling back to mock register', error);
       // Mock registration fallback

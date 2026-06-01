@@ -3,12 +3,13 @@ const router = express.Router();
 const QuizAnswerController = require('../controllers/quizAnswer.controller');
 const { verifyToken } = require('../middlewares/auth.middleware');
 const { authorizeRoles } = require('../middlewares/role.middleware');
+const { validateQuizSingle, validateQuizBulk } = require('../middlewares/validation.middleware');
 
 router.use(verifyToken);
 
 // Siswa submit jawaban
-router.post('/',       QuizAnswerController.submitOne);
-router.post('/bulk',   QuizAnswerController.submitBulk);
+router.post('/',       validateQuizSingle, QuizAnswerController.submitOne);
+router.post('/bulk',   validateQuizBulk,   QuizAnswerController.submitBulk);
 
 // Siswa lihat jawaban sendiri
 router.get('/',                          QuizAnswerController.getMyAnswers);
