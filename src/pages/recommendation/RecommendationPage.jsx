@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { mockRecommendations } from '../../mock/data';
 import api from '../../services/api';
 import { Lightbulb, ArrowRight, Sparkles, Clock, BarChart3 } from 'lucide-react';
-// import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function RecommendationPage() {
+  const navigate = useNavigate();
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -90,7 +91,7 @@ export default function RecommendationPage() {
                 <span className={getDiffColor(rec.difficulty)}>{rec.difficulty}</span>
                 <span className="flex items-center gap-1"><Clock size={12} /> {rec.duration}</span>
               </div>
-              <button className="btn-secondary text-xs py-2 px-4 flex items-center gap-1.5">
+              <button onClick={() => navigate(`/learning/${rec.id}`)} className="btn-secondary text-xs py-2 px-4 flex items-center gap-1.5">
                 Mulai <ArrowRight size={14} />
               </button>
             </div>

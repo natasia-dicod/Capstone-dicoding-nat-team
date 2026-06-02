@@ -6,10 +6,11 @@ import MainLayout from './components/layout/MainLayout';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import DashboardPage from './pages/dashboard/DashboardPage';
-// import ChatPage from './pages/chat/ChatPage';
 import LearningPage from './pages/learning/LearningPage';
+import MaterialDetailPage from './pages/learning/MaterialDetailPage';
 import AnswerInputPage from './pages/answer-input/AnswerInputPage';
 import EarlyWarningPage from './pages/early-warning/EarlyWarningPage';
+import StudentEarlyWarningPage from './pages/early-warning/StudentEarlyWarningPage';
 import RecommendationPage from './pages/recommendation/RecommendationPage';
 import ProfilePage from './pages/profile/ProfilePage';
 
@@ -43,6 +44,13 @@ function PublicRoute({ children }) {
   return children;
 }
 
+// Early warning route: render different page based on role
+function EarlyWarningRoute() {
+  const { isGuru, isAdmin } = useAuth();
+  if (isGuru || isAdmin) return <EarlyWarningPage />;
+  return <StudentEarlyWarningPage />;
+}
+
 export default function App() {
   return (
     <LanguageProvider>
@@ -57,18 +65,21 @@ export default function App() {
               {/* Protected Routes */}
               <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
                 <Route path="/dashboard" element={<DashboardPage />} />
-                 {/* <Route path="/chat" element={<ChatPage />} /> */}
+
+                {/* Materi Belajar */}
                 <Route path="/learning" element={<LearningPage />} />
+                <Route path="/learning/:id" element={<MaterialDetailPage />} />
+
+                {/* Jawab Soal — hanya siswa */}
                 <Route path="/answer-input" element={
                   <ProtectedRoute allowedRoles={['siswa', 'student', 'admin']}>
                     <AnswerInputPage />
                   </ProtectedRoute>
                 } />
-                <Route path="/early-warning" element={
-                  <ProtectedRoute allowedRoles={['guru', 'teacher', 'admin']}>
-                    <EarlyWarningPage />
-                  </ProtectedRoute>
-                } />
+
+                {/* Early Warning — semua role, tapi render komponen berbeda */}
+                <Route path="/early-warning" element={<EarlyWarningRoute />} />
+
                 <Route path="/recommendations" element={<RecommendationPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
               </Route>

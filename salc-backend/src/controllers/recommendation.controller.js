@@ -21,16 +21,27 @@ const RecommendationController = {
         const completionRate = summary.total_materials > 0
           ? (summary.completed / summary.total_materials) * 100 : 0;
 
+        const avgScore = summary.avg_score || 0;
         const payload = {
-          EngagementScore      : Math.min(100, summary.avg_score || 0),
-          Motivation           : Math.round(completionRate / 20),
-          AssignmentCompletion : completionRate,
-          StudyStressBalance   : 5,
-          Attendance           : completionRate,
-          StudyHours           : Math.round((summary.completed || 0) * 2),
           Gender               : 0,
+          LearningStyle        : 1,
+          Extracurricular      : 0,
           Internet             : 1,
+          OnlineCourses        : 1,
           EduTech              : 1,
+          Resources            : 2,
+          Age                  : 17,
+          StudyHours           : Math.round((summary.completed || 0) * 2) || 10,
+          Attendance           : completionRate || 80,
+          Motivation           : Math.round(completionRate / 20) || 3,
+          Discussions          : 3,
+          AssignmentCompletion : completionRate || 80,
+          ExamScore            : avgScore || 70,
+          StressLevel          : 3,
+          StudyEfficiency      : Math.min(100, avgScore) || 70,
+          StudyStressBalance   : 5,
+          EngagementScore      : Math.min(100, avgScore) || 70,
+          DigitalReadiness     : 3,
         };
 
         const mlRes = await axios.post(`${ML_URL}/api/predict/activity`, payload, { timeout: 10000 });
@@ -76,13 +87,13 @@ const RecommendationController = {
       let result;
       try {
         const payload = {
-          'gender'                      : gender ?? 0,
-          'race/ethnicity'              : race_ethnicity ?? 2,
-          'parental level of education' : parental_education ?? 2,
-          'lunch'                       : lunch ?? 1,
-          'test preparation course'     : test_preparation ?? 0,
-          'reading_score'               : reading_score,
-          'writing_score'               : writing_score,
+          gender                       : gender ?? 0,
+          race_ethnicity               : race_ethnicity ?? 2,
+          parental_level_of_education  : parental_education ?? 2,
+          lunch                        : lunch ?? 1,
+          test_preparation_course      : test_preparation ?? 0,
+          reading_score                : reading_score,
+          writing_score                : writing_score,
         };
 
         const mlRes = await axios.post(`${ML_URL}/api/predict/performance`, payload, { timeout: 10000 });

@@ -23,12 +23,11 @@ import { useLanguage } from '../../context/LanguageContext';
 const menuItems = {
   common: [
     { path: '/dashboard', key: 'nav.dashboard', icon: LayoutDashboard },
-     // { path: '/chat', label: 'AI Chat', icon: MessageCircle, badge: 'AI' },
-    // { path: '/learning', label: 'Materi Belajar', icon: BookOpen },
     { path: '/learning', key: 'nav.learning', icon: BookOpen },
     { path: '/recommendations', key: 'nav.recommendations', icon: Lightbulb },
   ],
   siswa: [
+    { path: '/early-warning', key: 'nav.earlyWarning', icon: AlertTriangle },
     { path: '/answer-input', key: 'nav.answerInput', icon: PenTool },
   ],
   guru: [
@@ -59,7 +58,11 @@ export default function Sidebar({ onCloseMobile }) {
     if (isGuru) items = [...items, ...menuItems.guru];
     else if (isAdmin) items = [...items, ...menuItems.guru, ...menuItems.siswa];
     else items = [...items, ...menuItems.siswa];
-    return items;
+    
+    // Hapus duplikat menu berdasarkan path (misal jika Admin punya akses guru & siswa)
+    return items.filter((item, index, self) => 
+      index === self.findIndex((t) => t.path === item.path)
+    );
   };
 
   return (
