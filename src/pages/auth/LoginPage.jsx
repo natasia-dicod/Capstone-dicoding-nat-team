@@ -125,7 +125,7 @@ export default function LoginPage() {
         </div>
 
         {/* Demo Accounts */}
-        <div className="mt-6 glass-card p-5">
+        {/* <div className="mt-6 glass-card p-5">
           <p className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">Akun Demo</p>
           <div className="space-y-2">
             {[
@@ -145,7 +145,7 @@ export default function LoginPage() {
               </button>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
