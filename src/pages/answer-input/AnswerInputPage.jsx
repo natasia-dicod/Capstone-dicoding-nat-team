@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { mockAnswerHistory } from '../../mock/data';
 import api from '../../services/api';
-import { PenTool, Send, Clock, CheckCircle2, Loader2, BookOpen, ChevronDown } from 'lucide-react';
+import { PenTool, Send, Clock, CheckCircle2, Loader2, BookOpen, ChevronDown, Info, Globe } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function AnswerInputPage() {
+  const { t } = useLanguage();
   const [subject, setSubject] = useState('');
   const [topic, setTopic] = useState('');
   const [question, setQuestion] = useState('');
@@ -22,13 +24,13 @@ export default function AnswerInputPage() {
           const apiHistory = response.data.data.map(h => ({
             id: h.id,
             subject: 'Materi AI',
-            topic: 'Pertanyaan',
-            question: h.question || 'Pertanyaan tidak tercatat',
+            topic: t('answer.history'),
+            question: h.question || t('answer.history'),
             answer: h.answer,
             score: h.score,
             feedback: h.feedback,
             status: h.feedback ? 'reviewed' : 'pending',
-            submittedAt: 'Baru saja'
+            submittedAt: t('answer.justNow')
           }));
           setHistory(apiHistory);
         } else {
@@ -71,7 +73,7 @@ export default function AnswerInputPage() {
         score: data.score,
         feedback: data.feedback,
         status: data.feedback ? 'reviewed' : 'pending',
-        submittedAt: 'Baru saja',
+        submittedAt: t('answer.justNow'),
       }, ...prev]);
     } catch (error) {
       const msg = error.response?.data?.message || 'Gagal mengirim jawaban. Pastikan kamu sudah login dan backend berjalan.';
@@ -90,8 +92,8 @@ export default function AnswerInputPage() {
   return (
     <div className="animate-fade-in">
       <div className="page-header">
-        <h1 className="page-title">Jawab Soal ✍️</h1>
-        <p className="page-subtitle">Kirim jawaban essay Anda untuk mendapatkan feedback AI</p>
+        <h1 className="page-title">{t('answer.title')}</h1>
+        <p className="page-subtitle">{t('answer.subtitle')}</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
@@ -99,12 +101,28 @@ export default function AnswerInputPage() {
         <div className="lg:col-span-3">
           <div className="glass-card p-6">
             <h3 className="font-semibold text-text-primary mb-4 flex items-center gap-2">
-              <PenTool size={18} className="text-primary" /> Form Jawaban Baru
+              <PenTool size={18} className="text-primary" /> {t('answer.newForm')}
             </h3>
+
+            {/* AI Tips Banner */}
+            <div className="mb-5 flex items-start gap-3 px-4 py-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-sm">
+              <Globe size={18} className="text-blue-500 mt-0.5 shrink-0" />
+              <div>
+                <p className="font-semibold text-blue-500 mb-0.5">{t('answer.tipsTitle')}</p>
+                <p className="text-text-secondary text-xs leading-relaxed">
+                  {t('answer.tipsDesc')}{' '}
+                  <span className="font-semibold text-blue-400">{t('answer.tipsQuestion')}</span>{' '}
+                  {t('answer.tipsAnd')}{' '}
+                  <span className="font-semibold text-blue-400">{t('answer.tipsAnswer')}</span>{' '}
+                  <span className="font-semibold text-blue-400">{t('answer.tipsLang')}</span>
+                  {t('answer.tipsNote')}
+                </p>
+              </div>
+            </div>
 
             {submitted && (
               <div className="mb-4 px-4 py-3 bg-accent/10 border border-accent/20 rounded-xl text-accent text-sm animate-fade-in flex items-center gap-2">
-                <CheckCircle2 size={16} /> Jawaban berhasil dikirim! AI sedang menganalisis...
+                <CheckCircle2 size={16} /> {t('answer.successMsg')}
               </div>
             )}
 
@@ -117,7 +135,9 @@ export default function AnswerInputPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-text-secondary mb-1.5">Mata Pelajaran</label>
+                  <label className="block text-sm font-medium text-text-secondary mb-1.5">
+                    {t('answer.subject')} <span className="text-red-500">*</span>
+                  </label>
                   <select
                     id="answer-subject"
                     value={subject}
@@ -125,53 +145,74 @@ export default function AnswerInputPage() {
                     className="input-field appearance-none"
                     required
                   >
-                    <option value="">Pilih mata pelajaran</option>
-                    <option value="Matematika">Matematika</option>
-                    <option value="Fisika">Fisika</option>
-                    <option value="Kimia">Kimia</option>
-                    <option value="Biologi">Biologi</option>
-                    <option value="Bahasa Inggris">Bahasa Inggris</option>
+                    <option value="">{t('answer.selectSubject')}</option>
+                    <option value="Mathematics">{t('answer.subjectMath')}</option>
+                    <option value="Physics">{t('answer.subjectPhysics')}</option>
+                    <option value="Chemistry">{t('answer.subjectChem')}</option>
+                    <option value="Biology">{t('answer.subjectBio')}</option>
+                    <option value="English">{t('answer.subjectEng')}</option>
+                    <option value="History">{t('answer.subjectHistory')}</option>
+                    <option value="Computer Science">{t('answer.subjectCS')}</option>
+                    <option value="Other">{t('answer.subjectOther')}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-text-secondary mb-1.5">Topik</label>
+                  <label className="block text-sm font-medium text-text-secondary mb-1.5">
+                    {t('answer.topic')} <span className="text-red-500">*</span>
+                  </label>
                   <input
                     id="answer-topic"
                     type="text"
                     value={topic}
                     onChange={(e) => setTopic(e.target.value)}
                     className="input-field"
-                    placeholder="Contoh: Integral Tentu"
+                    placeholder={t('answer.topicPlaceholder')}
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-text-secondary mb-1.5">Soal / Pertanyaan</label>
+                <label className="block text-sm font-medium text-text-secondary mb-1.5">
+                  {t('answer.question')} <span className="text-red-500">*</span>
+                </label>
                 <textarea
                   id="answer-question"
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
                   className="input-field resize-none"
                   rows={3}
-                  placeholder="Tuliskan soal yang ingin Anda jawab..."
+                  placeholder={t('answer.questionPlaceholder')}
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-text-secondary mb-1.5">Jawaban Anda</label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-sm font-medium text-text-secondary">
+                    {t('answer.yourAnswer')} <span className="text-red-500">*</span>
+                  </label>
+                  <span className="flex items-center gap-1 text-[11px] text-blue-400 font-medium">
+                    <Globe size={11} />
+                    {t('answer.writeInEnglish')}
+                  </span>
+                </div>
                 <textarea
                   id="answer-content"
                   value={answer}
                   onChange={(e) => setAnswer(e.target.value)}
                   className="input-field resize-none"
                   rows={8}
-                  placeholder="Tuliskan jawaban essay Anda di sini..."
+                  placeholder={t('answer.answerPlaceholder')}
                   required
                 />
-                <p className="text-xs text-text-muted mt-1.5">{answer.length} karakter</p>
+                <div className="flex items-center justify-between mt-1.5">
+                  <p className="text-xs text-text-muted">{answer.length} {t('answer.characters')}</p>
+                  <p className="text-[11px] text-text-muted flex items-center gap-1">
+                    <Info size={10} />
+                    <span className="text-red-400">*</span> {t('answer.requiredFields')}
+                  </p>
+                </div>
               </div>
 
               <button
@@ -183,11 +224,11 @@ export default function AnswerInputPage() {
                 {submitting ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Mengirim...
+                    {t('answer.submitting')}
                   </>
                 ) : (
                   <>
-                    <Send size={16} /> Kirim Jawaban
+                    <Send size={16} /> {t('answer.submit')}
                   </>
                 )}
               </button>
@@ -199,10 +240,10 @@ export default function AnswerInputPage() {
         <div className="lg:col-span-2">
           <div className="glass-card p-6">
             <h3 className="font-semibold text-text-primary mb-4 flex items-center gap-2">
-              <Clock size={18} className="text-primary" /> Riwayat Jawaban
+              <Clock size={18} className="text-primary" /> {t('answer.history')}
             </h3>
             {loadingHistory ? (
-              <p className="text-sm text-text-muted">Loading history...</p>
+              <p className="text-sm text-text-muted">{t('answer.loadingHistory')}</p>
             ) : (
               <div className="space-y-3">
                 {history.map((item) => (
@@ -219,7 +260,7 @@ export default function AnswerInputPage() {
                     </div>
                     {item.feedback && (
                       <div className="mt-3 px-3 py-2 rounded-lg bg-primary/5 border border-primary/10 text-xs text-text-secondary">
-                        <span className="font-medium text-primary">AI Feedback:</span> {item.feedback}
+                        <span className="font-medium text-primary">{t('answer.aiFeedback')}:</span> {item.feedback}
                       </div>
                     )}
                   </div>
