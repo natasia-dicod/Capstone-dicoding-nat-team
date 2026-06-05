@@ -33,7 +33,7 @@ function ChatBubble({ message }) {
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
       {!isUser && (
         <div className="w-8 h-8 rounded-xl bg-white p-0.5 flex items-center justify-center flex-shrink-0 mr-3 mt-1 shadow-sm">
-          <img src="/favicon.png" alt="Aplikasi Pintar" className="w-full h-full object-contain" />
+          <img src="/favicon.png" alt="SALC" className="w-full h-full object-contain" />
         </div>
       )}
       <div className={isUser ? 'chat-bubble-user' : 'chat-bubble-ai'}>
@@ -203,10 +203,10 @@ export default function ChatPage() {
               <ChevronLeft size={18} className={`transition-transform ${showSidebar ? '' : 'rotate-180'}`} />
             </button>
             <div className="w-8 h-8 rounded-xl bg-white p-1 flex items-center justify-center shadow-sm">
-              <img src="/favicon.png" alt="Aplikasi Pintar Logo" className="w-full h-full object-contain" />
+              <img src="/favicon.png" alt="SALC Logo" className="w-full h-full object-contain" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-text-primary">Aplikasi Pintar</h3>
+              <h3 className="text-sm font-semibold text-text-primary">SALC</h3>
               <p className="text-[10px] text-accent flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent" /> Online
               </p>
@@ -223,9 +223,9 @@ export default function ChatPage() {
             /* Empty State */
             <div className="h-full flex flex-col items-center justify-center text-center px-4">
               <div className="w-20 h-20 bg-white p-2 rounded-3xl flex items-center justify-center mb-6 animate-pulse-glow shadow-md">
-                <img src="/favicon.png" alt="Aplikasi Pintar Logo" className="w-full h-full object-contain" />
+                <img src="/favicon.png" alt="SALC Logo" className="w-full h-full object-contain" />
               </div>
-              <h2 className="text-2xl font-bold text-text-primary mb-2">Halo! Saya Aplikasi Pintar 👋</h2>
+              <h2 className="text-2xl font-bold text-text-primary mb-2">Halo! Saya SALC 👋</h2>
               <p className="text-text-secondary mb-8 max-w-md">
                 Asisten virtual pembelajaran Anda. Tanya apapun tentang materi pelajaran, minta bantuan essay, atau jelajahi fitur AI lainnya.
               </p>
@@ -293,7 +293,7 @@ export default function ChatPage() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Ketik pesan ke Aplikasi Pintar..."
+                placeholder="Ketik pesan ke SALC..."
                 className="input-chat pr-12"
                 rows={1}
                 style={{ maxHeight: '120px' }}

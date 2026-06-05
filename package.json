@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Aplikasi Pintar - Adaptive Learning Platform with AI Virtual Assistant",
+  "description": "SALC - Adaptive Learning Platform with AI Virtual Assistant",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

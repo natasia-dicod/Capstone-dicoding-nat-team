@@ -75,11 +75,11 @@ export default function Sidebar({ onCloseMobile }) {
       <div className="h-16 flex items-center px-4 border-b border-gray-200 dark:border-white/5">
         <div className="flex items-center gap-3 overflow-hidden">
           <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-white p-1">
-            <img src="/favicon.png" alt="Aplikasi Pintar Logo" className="w-full h-full object-contain" />
+            <img src="/favicon.png" alt="SALC Logo" className="w-full h-full object-contain" />
           </div>
           {!collapsed && (
             <span className="text-lg font-bold gradient-text whitespace-nowrap">
-              Aplikasi Pintar
+              SALC
             </span>
           )}
         </div>

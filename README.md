@@ -1,11 +1,11 @@
-# 🎓 Aplikasi Pintar — Smart Adaptive Learning Companion (SALC)
+# 🎓 SALC — Smart Adaptive Learning Companion
 
 > **Capstone Project Coding Camp 2026 — Powered by DBS Foundation**
 > 🆔 ID Tim: **CC26-PSU314** | 🎯 Tema: **Accessible & Adaptive Learning**
 
 ---
 
-**Aplikasi Pintar** adalah platform pembelajaran adaptif berbasis kecerdasan buatan (*Artificial Intelligence*) yang dirancang untuk mentransformasi cara belajar menjadi lebih personal, interaktif, dan berbasis data. Dengan mengintegrasikan Machine Learning, Natural Language Processing (NLP), dan dashboard analitik yang informatif, SALC hadir sebagai solusi cerdas untuk mendukung keberhasilan belajar setiap siswa — sambil membantu guru memantau perkembangan kelas secara real-time.
+**SALC** adalah platform pembelajaran adaptif berbasis kecerdasan buatan (*Artificial Intelligence*) yang dirancang untuk mentransformasi cara belajar menjadi lebih personal, interaktif, dan berbasis data. Dengan mengintegrasikan Machine Learning, Natural Language Processing (NLP), dan dashboard analitik yang informatif, SALC hadir sebagai solusi cerdas untuk mendukung keberhasilan belajar setiap siswa — sambil membantu guru memantau perkembangan kelas secara real-time.
 
 🌐 **Demo Langsung:** [capstone-dbs.vercel.app](https://capstone-dbs.vercel.app/dashboard)
 
@@ -219,7 +219,7 @@ ML_SERVICE_URL=https://adriellllll34-salc-ai.hf.space
 
 Model Machine Learning yang digunakan dalam proyek ini tersedia untuk diunduh melalui tautan berikut:
 
-📥 **[Download Model AI — Google Drive](https://drive.google.com/drive/folders/1DMdISE93eNEcuXrgt7sqt7TTumTZw5Gh?usp=drive_link)**
+📥 **[Download Model AI — Google Drive](https://drive.google.com/drive/folders/1_placeholder_link_here)**
 
 > Pastikan akun `capstone@student.devacademy.id` memiliki akses untuk melihat dan mengunduh file model tersebut.
 

@@ -86,7 +86,7 @@ export const mockChatMessages = [
   {
     id: 1,
     role: 'assistant',
-    content: 'Halo! 👋 Saya Aplikasi Pintar, asisten virtual pembelajaran Anda. Saya bisa membantu Anda dengan:\n\n🔍 **Mencari informasi** tentang materi pelajaran\n📝 **Menjawab pertanyaan** essay atau soal\n🖼️ **Membuat gambar** ilustrasi untuk belajar\n📊 **Menganalisis performa** belajar Anda\n\nApa yang bisa saya bantu hari ini?',
+    content: 'Halo! 👋 Saya SALC, asisten virtual pembelajaran Anda. Saya bisa membantu Anda dengan:\n\n🔍 **Mencari informasi** tentang materi pelajaran\n📝 **Menjawab pertanyaan** essay atau soal\n🖼️ **Membuat gambar** ilustrasi untuk belajar\n📊 **Menganalisis performa** belajar Anda\n\nApa yang bisa saya bantu hari ini?',
     time: '10:00',
   },
   {

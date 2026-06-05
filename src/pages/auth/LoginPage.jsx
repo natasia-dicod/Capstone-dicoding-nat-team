@@ -48,9 +48,9 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center mb-8 relative z-10">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white p-2 mb-4 animate-pulse-glow shadow-md">
-            <img src="/favicon.png" alt="Aplikasi Pintar Logo" className="w-full h-full object-contain" />
+            <img src="/favicon.png" alt="SLAC Logo" className="w-full h-full object-contain" />
           </div>
-          <h1 className="text-3xl font-bold gradient-text">Aplikasi Pintar</h1>
+          <h1 className="text-3xl font-bold gradient-text">SLAC</h1>
           <p className="text-text-secondary mt-2">Platform Pembelajaran Adaptif dengan AI</p>
         </div>
 
